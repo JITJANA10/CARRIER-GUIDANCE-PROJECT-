@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Keyboard, CheckCircle2, Award } from 'lucide-react';
+import { Badge } from './ui/Badge';
 
-const SAMPLE_TEXT = "The ability to communicate effectively and type accurately is a core skill for many modern careers. Being able to quickly draft emails, code, and document your work will give you a significant advantage in the workplace. Practice regularly to improve your typing speed and accuracy.";
+const SAMPLE_TEXT = "The ability to communicate effectively and type accurately is a core technical skill for modern digital careers. Being able to quickly draft specifications, write clean code, and document decisions gives you a direct velocity advantage in the workplace. Practice regularly to sharpen your typing speed and cognitive cadence.";
 
 export function TypingGame({ onComplete }: { onComplete?: (wpm: number, accuracy: number) => void }) {
   const [text] = useState(SAMPLE_TEXT);
@@ -29,11 +30,10 @@ export function TypingGame({ onComplete }: { onComplete?: (wpm: number, accuracy
   }, [isStarted, timeLeft, isFinished]);
 
   const calculateStats = (input: string) => {
-    const timeSpent = 60 - timeLeft; // in seconds
+    const timeSpent = 60 - timeLeft;
     const minutes = timeSpent / 60;
     const wordsTyped = input.trim().split(/\s+/).length;
     
-    // Calculate accuracy
     let correctChars = 0;
     for (let i = 0; i < input.length; i++) {
       if (input[i] === text[i]) {
@@ -61,7 +61,6 @@ export function TypingGame({ onComplete }: { onComplete?: (wpm: number, accuracy
     setWpm(currWpm);
     setAccuracy(currAccuracy);
 
-    // Auto end if they finished the text
     if (val.length >= text.length) {
       endGame();
     }
@@ -89,12 +88,12 @@ export function TypingGame({ onComplete }: { onComplete?: (wpm: number, accuracy
 
   const renderText = () => {
     return text.split('').map((char, index) => {
-      let color = 'text-slate-500'; // un-typed
+      let color = 'text-[#71717A]';
       if (index < userInput.length) {
-        color = userInput[index] === char ? 'text-green-400' : 'text-red-400 bg-red-400/20';
+        color = userInput[index] === char ? 'text-[#75D69A]' : 'text-rose-400 bg-rose-500/20 rounded-xs';
       }
       return (
-        <span key={index} className={`${color} transition-colors`}>
+        <span key={index} className={`${color} font-mono transition-colors`}>
           {char}
         </span>
       );
@@ -102,50 +101,68 @@ export function TypingGame({ onComplete }: { onComplete?: (wpm: number, accuracy
   };
 
   return (
-    <Card glass className="border-brand-blue/30 w-full max-w-4xl mx-auto">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Typing Speed Assessment</CardTitle>
-        <div className="flex gap-4 text-sm font-bold">
-          <div className="bg-black/30 px-3 py-1 rounded border border-white/10 text-brand-cyan">
-            {timeLeft}s
+    <Card className="bg-[#202327] border-[#34383D]">
+      <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-[#34383D]">
+        <div className="flex items-center gap-2">
+          <Keyboard className="w-4 h-4 text-[#8B7CFF]" />
+          <CardTitle className="text-sm">Typing Velocity Benchmark</CardTitle>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-[#71717A]">Time:</span>
+            <span className="font-mono text-[#F4F4F5] font-semibold">{timeLeft}s</span>
           </div>
-          <div className="bg-black/30 px-3 py-1 rounded border border-white/10">
-            {wpm} WPM
-          </div>
-          <div className="bg-black/30 px-3 py-1 rounded border border-white/10">
-            {accuracy}% Acc
-          </div>
+          <Button variant="outline" size="xs" onClick={restartGame} className="gap-1 border-[#34383D]">
+            <RotateCcw className="w-3 h-3" /> Reset
+          </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="bg-black/20 p-6 rounded-lg border border-white/5 font-mono text-lg leading-relaxed mb-4 select-none break-words min-h-[150px]">
+
+      <CardContent className="pt-4 space-y-4">
+        {/* Real-time metrics bar */}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="p-3 rounded-lg bg-[#17191C] border border-[#34383D] text-center">
+            <span className="text-[10px] text-[#71717A] uppercase font-bold tracking-wider">Speed</span>
+            <div className="text-xl font-bold font-mono text-[#8B7CFF] mt-0.5">{wpm} <span className="text-xs text-[#71717A] font-normal">WPM</span></div>
+          </div>
+          <div className="p-3 rounded-lg bg-[#17191C] border border-[#34383D] text-center">
+            <span className="text-[10px] text-[#71717A] uppercase font-bold tracking-wider">Accuracy</span>
+            <div className="text-xl font-bold font-mono text-[#75D69A] mt-0.5">{accuracy}%</div>
+          </div>
+          <div className="p-3 rounded-lg bg-[#17191C] border border-[#34383D] text-center">
+            <span className="text-[10px] text-[#71717A] uppercase font-bold tracking-wider">Status</span>
+            <div className="mt-1">
+              <Badge variant={isFinished ? "done" : isStarted ? "progress" : "todo"} dot>
+                {isFinished ? "Completed" : isStarted ? "Live" : "Ready"}
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        {/* Display Text Box */}
+        <div className="p-4 rounded-lg bg-[#17191C] border border-[#34383D] leading-relaxed text-xs select-none">
           {renderText()}
         </div>
-        
-        {!isFinished ? (
-          <textarea
-            ref={inputRef}
-            value={userInput}
-            onChange={handleInput}
-            placeholder="Start typing here to begin..."
-            className="w-full bg-black/40 border border-brand-blue/50 rounded-lg p-4 text-white font-mono text-lg focus:outline-none focus:border-brand-cyan transition-colors resize-none h-32"
-            spellCheck="false"
-          />
-        ) : (
-          <div className="bg-brand-blue/10 border border-brand-blue/30 rounded-lg p-6 text-center animate-in zoom-in duration-300">
-            <h3 className="text-2xl font-bold text-white mb-2">Assessment Complete!</h3>
-            <div className="flex justify-center gap-8 mb-6">
-              <div>
-                <div className="text-sm text-slate-400">Speed</div>
-                <div className="text-3xl font-bold text-brand-cyan">{wpm} <span className="text-lg">WPM</span></div>
-              </div>
-              <div>
-                <div className="text-sm text-slate-400">Accuracy</div>
-                <div className="text-3xl font-bold text-green-400">{accuracy}%</div>
-              </div>
+
+        {/* Interactive Typing Area */}
+        <textarea
+          ref={inputRef}
+          value={userInput}
+          onChange={handleInput}
+          disabled={isFinished}
+          placeholder="Start typing the text above to begin benchmark..."
+          rows={3}
+          className="w-full bg-[#111214] border border-[#34383D] rounded-lg p-3 text-xs text-[#F4F4F5] placeholder-[#71717A] focus:outline-none focus:border-[#8B7CFF] transition-colors resize-none disabled:opacity-50 font-mono"
+        />
+
+        {isFinished && (
+          <div className="p-3 rounded-lg bg-[#75D69A]/10 border border-[#75D69A]/30 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs text-[#75D69A]">
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Assessment completed! Speed registered to your profile.</span>
             </div>
-            <Button onClick={restartGame} className="bg-white text-black hover:bg-slate-200">
-              <RotateCcw className="mr-2 h-4 w-4" /> Try Again
+            <Button size="xs" variant="success" onClick={restartGame}>
+              Retest
             </Button>
           </div>
         )}

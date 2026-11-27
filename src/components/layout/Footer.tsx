@@ -3,48 +3,50 @@ import { Link } from 'react-router-dom';
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-brand-navy py-12 md:py-16">
-      <div className="container mx-auto px-4 md:px-8 grid gap-8 md:grid-cols-4 text-sm text-slate-400">
-        <div className="space-y-4">
-          <h4 className="text-white font-semibold">Product</h4>
+    <footer className="border-t border-[#34383D] bg-[#17191C] py-12 text-xs text-[#A1A1AA]">
+      <div className="container mx-auto px-4 md:px-8 grid gap-8 grid-cols-2 md:grid-cols-4">
+        <div className="space-y-3">
+          <h4 className="text-[#F4F4F5] font-semibold text-xs tracking-wider uppercase">Platform</h4>
           <ul className="space-y-2">
-            <li><Link to="/career-paths" className="hover:text-white transition-colors">Career Explorer</Link></li>
-            <li><Link to="/assessments" className="hover:text-white transition-colors">Assessments</Link></li>
-            <li><Link to="/skills" className="hover:text-white transition-colors">Skill Builder</Link></li>
-            <li><Link to="/mentors" className="hover:text-white transition-colors">Mentors</Link></li>
-            <li><Link to="/opportunities" className="hover:text-white transition-colors">Opportunities</Link></li>
+            <li><Link to="/dashboard/explorer" className="hover:text-white transition-colors">Career Explorer</Link></li>
+            <li><Link to="/dashboard/assessments" className="hover:text-white transition-colors">Assessments</Link></li>
+            <li><Link to="/dashboard/skills" className="hover:text-white transition-colors">Skill Gap Engine</Link></li>
+            <li><Link to="/dashboard/roadmap" className="hover:text-white transition-colors">Milestone Roadmaps</Link></li>
+            <li><Link to="/dashboard/ai-mentor" className="hover:text-white transition-colors text-[#8B7CFF]">AI Mentor</Link></li>
           </ul>
         </div>
-        <div className="space-y-4">
-          <h4 className="text-white font-semibold">For Institutions</h4>
+        <div className="space-y-3">
+          <h4 className="text-[#F4F4F5] font-semibold text-xs tracking-wider uppercase">Ecosystem</h4>
           <ul className="space-y-2">
-            <li><Link to="/partners" className="hover:text-white transition-colors">Partner With Us</Link></li>
-            <li><Link to="/course-providers" className="hover:text-white transition-colors">Course Providers</Link></li>
-            <li><Link to="/institution-dashboard" className="hover:text-white transition-colors">Institution Dashboard</Link></li>
-            <li><Link to="/become-mentor" className="hover:text-white transition-colors">Become a Mentor</Link></li>
+            <li><Link to="/dashboard/mentors" className="hover:text-white transition-colors">Mentorship Network</Link></li>
+            <li><Link to="/dashboard/routine" className="hover:text-white transition-colors">Daily Planner</Link></li>
+            <li><Link to="/onboarding" className="hover:text-white transition-colors">Career Questionnaire</Link></li>
+            <li><Link to="/dashboard" className="hover:text-white transition-colors">Intelligence Hub</Link></li>
           </ul>
         </div>
-        <div className="space-y-4">
-          <h4 className="text-white font-semibold">Resources</h4>
+        <div className="space-y-3">
+          <h4 className="text-[#F4F4F5] font-semibold text-xs tracking-wider uppercase">Methodology</h4>
           <ul className="space-y-2">
-            <li><Link to="/guides" className="hover:text-white transition-colors">Career Guides</Link></li>
-            <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
-            <li><Link to="/research" className="hover:text-white transition-colors">Research</Link></li>
-            <li><Link to="/faqs" className="hover:text-white transition-colors">FAQs</Link></li>
+            <li><span className="text-[#71717A]">01. Discover Yourself</span></li>
+            <li><span className="text-[#71717A]">02. Choose Direction</span></li>
+            <li><span className="text-[#71717A]">03. Build Skills</span></li>
+            <li><span className="text-[#71717A]">04. Gain Experience</span></li>
+            <li><span className="text-[#71717A]">05. Launch Career</span></li>
           </ul>
         </div>
-        <div className="space-y-4">
-          <h4 className="text-white font-semibold">Company</h4>
-          <ul className="space-y-2">
-            <li><Link to="/about" className="hover:text-white transition-colors">About</Link></li>
-            <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-            <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
-            <li><Link to="/terms" className="hover:text-white transition-colors">Terms</Link></li>
-          </ul>
+        <div className="space-y-3">
+          <h4 className="text-[#F4F4F5] font-semibold text-xs tracking-wider uppercase">PathPilot OS</h4>
+          <p className="text-[11px] text-[#71717A] leading-relaxed">
+            The AI-augmented career navigational operating system designed to bridge academic ambiguity and high-earning industry readiness.
+          </p>
+          <p className="text-[11px] text-[#71717A] pt-2">
+            "Your Future. Mapped Personally."
+          </p>
         </div>
       </div>
-      <div className="container mx-auto px-4 md:px-8 mt-12 pt-8 border-t border-white/10 text-center text-slate-500">
+      <div className="container mx-auto px-4 md:px-8 mt-8 pt-6 border-t border-[#34383D] flex flex-col sm:flex-row items-center justify-between gap-4 text-[#71717A] text-[11px]">
         <p>&copy; {new Date().getFullYear()} PathPilot. All rights reserved.</p>
+        <p>Built with React 19, TypeScript & Vite.</p>
       </div>
     </footer>
   );

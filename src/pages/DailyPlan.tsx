@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Calendar, 
+  Clock, 
+  Battery, 
+  SlidersHorizontal, 
+  CheckCircle2, 
+  Circle, 
+  BookOpen, 
+  Code, 
+  Layers, 
+  RefreshCw, 
+  Sparkles,
+  ArrowRight
+} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Calendar, Clock, SlidersHorizontal, Battery, Book, Trophy, RefreshCw, CheckCircle2, Circle } from 'lucide-react';
+import { Badge } from '../components/ui/Badge';
+import { Progress } from '../components/ui/Progress';
 import { useAppContext } from '../context/AppContext';
 
 type Task = {
@@ -11,195 +25,201 @@ type Task = {
   time: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   reason: string;
-  impact: 'Low' | 'Medium' | 'High' | 'Critical';
-  status: 'todo' | 'done' | 'missed';
+  impact: 'Critical' | 'High' | 'Medium' | 'Low';
+  status: 'todo' | 'done';
   type: 'skill' | 'project' | 'review' | 'soft-skill';
 };
 
 export function DailyPlan() {
   const { profile } = useAppContext();
-  
-  const [availableHours, setAvailableHours] = useState(2);
-  const [isAdjusting, setIsAdjusting] = useState(false);
+  const [availableHours, setAvailableHours] = useState(2.5);
+  const [mode, setMode] = useState<'normal' | 'tired' | 'project' | 'exam'>('normal');
   const [tasks, setTasks] = useState<Task[]>([]);
-  
-  // Simulation of intelligent task generation based on constraints
-  const generatePlan = (hours: number, mode: 'normal' | 'tired' | 'project' | 'exam' = 'normal') => {
-    let totalMins = hours * 60;
-    let newTasks: Task[] = [];
-    
-    if (mode === 'tired') {
-      newTasks = [
-        { id: '1', title: 'Review Flashcards', time: 15, difficulty: 'Easy', reason: 'Low cognitive load review of core concepts.', impact: 'Low', status: 'todo', type: 'review' },
-        { id: '2', title: 'Watch Industry Talk', time: Math.min(30, totalMins - 15), difficulty: 'Easy', reason: 'Passive learning while energy is low.', impact: 'Medium', status: 'todo', type: 'soft-skill' }
-      ];
-    } else if (mode === 'project') {
-      newTasks = [
-        { id: '1', title: 'Deep Work: Capstone Project', time: totalMins - 15, difficulty: 'Hard', reason: 'Focused time to build your portfolio.', impact: 'Critical', status: 'todo', type: 'project' },
-        { id: '2', title: 'Project Review & Commit', time: 15, difficulty: 'Medium', reason: 'Ensure work is saved and documented.', impact: 'High', status: 'todo', type: 'review' }
-      ];
-    } else if (mode === 'exam') {
-      newTasks = [
-        { id: '1', title: 'Exam Prep: Core Subjects', time: Math.floor(totalMins * 0.8), difficulty: 'Hard', reason: 'Immediate academic priority.', impact: 'High', status: 'todo', type: 'skill' },
-        { id: '2', title: 'Light Career Reading', time: Math.floor(totalMins * 0.2), difficulty: 'Easy', reason: 'Maintain slight career momentum.', impact: 'Low', status: 'todo', type: 'review' }
-      ];
+
+  const generatePlan = (hours: number, currentMode: 'normal' | 'tired' | 'project' | 'exam') => {
+    const totalMins = Math.round(hours * 60);
+    const newTasks: Task[] = [];
+
+    if (currentMode === 'tired') {
+      newTasks.push(
+        { id: '1', title: 'Passive Concept Review: Product Metrics Flashcards', time: 15, difficulty: 'Easy', reason: 'Low cognitive load review of retention & churn formulas.', impact: 'Low', status: 'todo', type: 'review' },
+        { id: '2', title: 'Watch Industry Case Study: How Stripe Designs APIs', time: Math.min(30, totalMins - 15), difficulty: 'Easy', reason: 'Passive absorption while mental energy is depleted.', impact: 'Medium', status: 'todo', type: 'soft-skill' }
+      );
+    } else if (currentMode === 'project') {
+      newTasks.push(
+        { id: '1', title: 'Deep Work Block: Build SQL Retention Model', time: totalMins - 20, difficulty: 'Hard', reason: 'Uninterrupted focus on primary portfolio deliverable.', impact: 'Critical', status: 'todo', type: 'project' },
+        { id: '2', title: 'Code Commit & Documentation Update', time: 20, difficulty: 'Medium', reason: 'Ensure repository documentation reflects new schema queries.', impact: 'High', status: 'todo', type: 'review' }
+      );
+    } else if (currentMode === 'exam') {
+      newTasks.push(
+        { id: '1', title: 'Academic / Certification Exam Prep', time: Math.floor(totalMins * 0.75), difficulty: 'Hard', reason: 'Highest immediate priority for credentialing.', impact: 'Critical', status: 'todo', type: 'skill' },
+        { id: '2', title: 'Light Industry Newsletter Skim', time: Math.floor(totalMins * 0.25), difficulty: 'Easy', reason: 'Maintain slight background momentum without burnout.', impact: 'Low', status: 'todo', type: 'review' }
+      );
     } else {
       // Normal balanced mode
-      let timeRemaining = totalMins;
-      
-      const skillTime = Math.floor(totalMins * 0.4);
-      newTasks.push({ id: '1', title: 'SQL Practice', time: skillTime, difficulty: 'Medium', reason: 'Closes your biggest technical gap.', impact: 'Critical', status: 'todo', type: 'skill' });
-      timeRemaining -= skillTime;
-      
-      if (timeRemaining >= 40) {
-        newTasks.push({ id: '2', title: 'Project Work', time: Math.floor(totalMins * 0.3), difficulty: 'Hard', reason: 'Applies skills to portfolio.', impact: 'High', status: 'todo', type: 'project' });
-        timeRemaining -= Math.floor(totalMins * 0.3);
+      let remaining = totalMins;
+      const t1Time = Math.min(45, Math.floor(totalMins * 0.4));
+      newTasks.push({ id: '1', title: 'SQL Joins & Multi-Table Aggregations', time: t1Time, difficulty: 'Medium', reason: 'Closes your highest priority technical gap.', impact: 'Critical', status: 'todo', type: 'skill' });
+      remaining -= t1Time;
+
+      if (remaining >= 35) {
+        newTasks.push({ id: '2', title: 'PRD Drafting: Spotify Social Queue Feature', time: 35, difficulty: 'Hard', reason: 'Applies strategic prioritization into written artifact.', impact: 'High', status: 'todo', type: 'project' });
+        remaining -= 35;
       }
-      
-      if (timeRemaining >= 20) {
-        newTasks.push({ id: '3', title: 'Communication Practice', time: 15, difficulty: 'Medium', reason: 'Crucial soft skill for your target role.', impact: 'Medium', status: 'todo', type: 'soft-skill' });
-        timeRemaining -= 15;
+
+      if (remaining >= 20) {
+        newTasks.push({ id: '3', title: 'Executive Communication Practice', time: 20, difficulty: 'Medium', reason: 'Sharpens elevator pitch for stakeholder alignment.', impact: 'Medium', status: 'todo', type: 'soft-skill' });
+        remaining -= 20;
       }
-      
-      newTasks.push({ id: '4', title: 'Career Progress Review', time: timeRemaining, difficulty: 'Easy', reason: 'Reflect on daily learnings.', impact: 'Low', status: 'todo', type: 'review' });
+
+      if (remaining > 0) {
+        newTasks.push({ id: '4', title: 'Daily Retrospective & Roadmap Check-in', time: remaining, difficulty: 'Easy', reason: 'Log achievements and review progress milestones.', impact: 'Low', status: 'todo', type: 'review' });
+      }
     }
-    
+
     setTasks(newTasks);
-    setIsAdjusting(false);
   };
 
   useEffect(() => {
-    generatePlan(availableHours);
-  }, []); // Run once on mount
+    generatePlan(availableHours, mode);
+  }, [availableHours, mode]);
 
   const toggleTask = (id: string) => {
-    setTasks(prev => prev.map(t => {
-      if (t.id === id) {
-        // If missed, intelligently reschedule (simulate by resetting to todo for tomorrow, but here just mark todo)
-        return { ...t, status: t.status === 'done' ? 'todo' : 'done' };
-      }
-      return t;
-    }));
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, status: t.status === 'done' ? 'todo' : 'done' } : t));
   };
 
-  const handleAdjust = (type: string) => {
-    if (type === 'less') {
-      const newHours = Math.max(0.5, availableHours - 0.5);
-      setAvailableHours(newHours);
-      generatePlan(newHours);
-    } else if (type === 'more') {
-      const newHours = availableHours + 0.5;
-      setAvailableHours(newHours);
-      generatePlan(newHours);
-    } else if (type === 'tired') {
-      generatePlan(availableHours, 'tired');
-    } else if (type === 'exam') {
-      generatePlan(availableHours, 'exam');
-    } else if (type === 'projects') {
-      generatePlan(availableHours, 'project');
-    }
-  };
+  const completedCount = tasks.filter(t => t.status === 'done').length;
+  const completedMins = tasks.filter(t => t.status === 'done').reduce((acc, t) => acc + t.time, 0);
+  const totalMins = tasks.reduce((acc, t) => acc + t.time, 0);
 
   return (
-    <div className="space-y-8 pb-12 animate-in fade-in duration-700 max-w-4xl mx-auto">
-      
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex justify-between items-end">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Calendar className="text-brand-blue h-8 w-8" /> My Daily Career Plan
+          <h1 className="text-xl md:text-2xl font-bold text-[#F4F4F5] tracking-tight">
+            Daily Planner
           </h1>
-          <p className="text-slate-400 mt-1 text-lg">Intelligent scheduling optimized for your goals and energy.</p>
+          <p className="text-xs text-[#71717A] mt-0.5">
+            Adaptive, energy-calibrated micro-task execution engine.
+          </p>
         </div>
-        <div className="text-right">
-          <div className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-1">Today's Time Limit</div>
-          <div className="text-2xl font-bold text-white flex items-center justify-end gap-2">
-            <Clock className="h-5 w-5 text-brand-cyan" /> {availableHours} hours
-          </div>
+
+        {/* Progress pill */}
+        <div className="flex items-center gap-2 p-1.5 px-3 rounded-lg bg-[#202327] border border-[#34383D] text-xs">
+          <span className="text-[#71717A]">Today:</span>
+          <span className="font-mono font-bold text-[#75D69A]">{completedMins} / {totalMins} mins</span>
+          <span className="text-[#71717A]">({completedCount}/{tasks.length} done)</span>
         </div>
-      </motion.div>
-
-      {/* Adjustment Panel */}
-      <Card glass className="border-brand-blue/30 bg-gradient-to-r from-brand-blue/10 to-transparent">
-        <CardContent className="p-4 flex flex-col md:flex-row items-center gap-4 justify-between">
-          <div className="flex items-center gap-3">
-            <SlidersHorizontal className="h-5 w-5 text-brand-blue" />
-            <span className="font-semibold text-white">Adjust My Plan</span>
-          </div>
-          
-          <div className="flex flex-wrap gap-2 justify-center">
-            <Button size="sm" variant="outline" onClick={() => handleAdjust('less')} className="border-white/10 hover:bg-white/10 text-xs">
-              <Clock className="h-3 w-3 mr-1" /> Less time
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => handleAdjust('more')} className="border-white/10 hover:bg-white/10 text-xs">
-              <Clock className="h-3 w-3 mr-1" /> More time
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => handleAdjust('tired')} className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10 text-xs">
-              <Battery className="h-3 w-3 mr-1" /> I'm tired
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => handleAdjust('exam')} className="border-red-500/30 text-red-400 hover:bg-red-500/10 text-xs">
-              <Book className="h-3 w-3 mr-1" /> I have an exam
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => handleAdjust('projects')} className="border-brand-violet/30 text-brand-violet hover:bg-brand-violet/10 text-xs">
-              <Trophy className="h-3 w-3 mr-1" /> Focus on projects
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Task List */}
-      <div className="space-y-4 relative">
-        <AnimatePresence mode="popLayout">
-          {tasks.map((task, i) => (
-            <motion.div
-              key={task.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <Card glass className={`border-white/5 transition-all ${task.status === 'done' ? 'opacity-60 bg-white/5' : 'hover:border-white/20 hover:bg-black/40 cursor-pointer'}`} onClick={() => toggleTask(task.id)}>
-                <CardContent className="p-5 flex flex-col md:flex-row gap-4 items-start md:items-center">
-                  
-                  {/* Status & Time */}
-                  <div className="flex items-center gap-4 min-w-[120px]">
-                    <div className="shrink-0">
-                      {task.status === 'done' ? (
-                        <CheckCircle2 className="h-6 w-6 text-green-400" />
-                      ) : (
-                        <Circle className="h-6 w-6 text-slate-500" />
-                      )}
-                    </div>
-                    <div>
-                      <div className={`font-bold text-lg ${task.status === 'done' ? 'text-slate-500' : 'text-brand-cyan'}`}>{task.time}</div>
-                      <div className="text-xs text-slate-500 font-bold uppercase">Mins</div>
-                    </div>
-                  </div>
-
-                  {/* Main Details */}
-                  <div className="flex-1">
-                    <h3 className={`text-xl font-bold mb-1 ${task.status === 'done' ? 'line-through text-slate-400' : 'text-white'}`}>{task.title}</h3>
-                    <p className="text-sm text-slate-400 line-clamp-2">{task.reason}</p>
-                  </div>
-
-                  {/* Metadata */}
-                  <div className="flex md:flex-col gap-3 shrink-0">
-                    <div className="text-xs bg-white/5 border border-white/10 px-2 py-1 rounded text-slate-300">
-                      Difficulty: <span className={task.difficulty === 'Hard' ? 'text-red-400' : task.difficulty === 'Medium' ? 'text-amber-400' : 'text-green-400'}>{task.difficulty}</span>
-                    </div>
-                    <div className="text-xs bg-white/5 border border-white/10 px-2 py-1 rounded text-slate-300">
-                      Impact: <span className={task.impact === 'Critical' ? 'text-red-400 font-bold' : task.impact === 'High' ? 'text-brand-cyan font-bold' : 'text-slate-300'}>{task.impact}</span>
-                    </div>
-                  </div>
-                  
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </AnimatePresence>
       </div>
 
-      <div className="text-center text-sm text-slate-500 mt-8 flex items-center justify-center gap-2">
-        <RefreshCw className="h-4 w-4" /> Missed tasks automatically roll over and intelligently reschedule based on dependencies.
+      {/* Control Panel: Hours & Modes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Available Hours Selector */}
+        <Card className="p-4 bg-[#202327] border-[#34383D]">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold text-[#F4F4F5] flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[#8B7CFF]" /> Available Study Time
+            </span>
+            <span className="text-xs font-mono font-bold text-[#8B7CFF]">{availableHours} Hours</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {[1, 1.5, 2, 2.5, 3, 4].map(h => (
+              <button
+                key={h}
+                onClick={() => setAvailableHours(h)}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-mono font-medium transition-colors ${
+                  availableHours === h
+                    ? 'bg-[#8B7CFF] text-white font-bold shadow-sm'
+                    : 'bg-[#17191C] text-[#A1A1AA] border border-[#34383D] hover:text-white'
+                }`}
+              >
+                {h}h
+              </button>
+            ))}
+          </div>
+        </Card>
+
+        {/* Energy State Selector */}
+        <Card className="p-4 bg-[#202327] border-[#34383D]">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold text-[#F4F4F5] flex items-center gap-2">
+              <Battery className="w-4 h-4 text-[#75D69A]" /> Mental Energy State
+            </span>
+            <span className="text-[11px] text-[#71717A] capitalize">{mode} Mode</span>
+          </div>
+
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { id: 'normal', label: 'Balanced' },
+              { id: 'tired', label: 'Low Energy' },
+              { id: 'project', label: 'Deep Work' },
+              { id: 'exam', label: 'Exam Focus' },
+            ].map(m => (
+              <button
+                key={m.id}
+                onClick={() => setMode(m.id as any)}
+                className={`py-1.5 rounded-lg text-xs font-medium transition-colors text-center ${
+                  mode === m.id
+                    ? 'bg-[#26292E] text-white border border-[#34383D] shadow-sm font-semibold'
+                    : 'bg-[#17191C] text-[#71717A] border border-[#34383D] hover:text-[#A1A1AA]'
+                }`}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      {/* Task Checklist Timeline */}
+      <div className="space-y-3">
+        {tasks.map((task, idx) => (
+          <Card 
+            key={task.id} 
+            onClick={() => toggleTask(task.id)}
+            className={`p-4 bg-[#202327] border-[#34383D] hover:border-[#4a5057] cursor-pointer transition-all ${
+              task.status === 'done' ? 'opacity-65' : ''
+            }`}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <button className="mt-0.5 text-[#75D69A] shrink-0">
+                  {task.status === 'done' ? (
+                    <CheckCircle2 className="w-5 h-5 fill-[#75D69A]/20" />
+                  ) : (
+                    <Circle className="w-5 h-5 text-[#71717A]" />
+                  )}
+                </button>
+
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-sm font-semibold ${task.status === 'done' ? 'line-through text-[#71717A]' : 'text-[#F4F4F5]'}`}>
+                      {task.title}
+                    </span>
+                    <Badge variant={task.impact === 'Critical' ? 'critical' : task.impact === 'High' ? 'high' : 'medium'} dot>
+                      {task.impact}
+                    </Badge>
+                  </div>
+
+                  <p className="text-xs text-[#A1A1AA] leading-relaxed">
+                    {task.reason}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
+                <span className="text-xs font-mono text-[#A1A1AA] flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5 text-[#71717A]" /> {task.time}m
+                </span>
+                <Badge variant="skill" className="capitalize text-[10px]">
+                  {task.difficulty}
+                </Badge>
+              </div>
+            </div>
+          </Card>
+        ))}
       </div>
     </div>
   );

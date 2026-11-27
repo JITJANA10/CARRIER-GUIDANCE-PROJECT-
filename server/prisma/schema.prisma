@@ -1,0 +1,170 @@
+// PATHPILOT — PRODUCTION-CONSCIOUS LOCAL SQLITE SCHEMA
+// Directive: PP-DEMO-60MIN-EXEC-2026-01
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String            @id @default(uuid())
+  email           String            @unique
+  passwordHash    String
+  role            String            @default("STUDENT") // STUDENT, MENTOR, ADMIN
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  profile         Profile?
+  skillProfile    SkillProfile?
+  studentSkills   StudentSkill[]
+  progress        RoadmapProgress[]
+  tasks           DailyTask[]
+  studentBookings MentorBooking[]   @relation("StudentBookings")
+  mentorProfile   MentorProfile?    @relation("MentorUser")
+
+  @@map("users")
+}
+
+model Profile {
+  id                     String   @id @default(uuid())
+  userId                 String   @unique
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName              String
+  lastName               String
+  targetGoal             String?
+  educationLevel         String?
+  onboardingCompleted    Boolean  @default(false)
+  streakDays             Int      @default(0)
+  weeklyTargetHours      Int      @default(10)
+  completedHoursThisWeek Float    @default(0)
+  interestsJson          String   @default("[]")
+  strengthsJson          String   @default("[]")
+  savedCareersJson       String   @default("[]")
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@map("profiles")
+}
+
+model SkillProfile {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skillsJson String   @default("{}") // Serialized Record<string, number>
+  updatedAt  DateTime @updatedAt
+
+  @@map("skill_profiles")
+}
+
+model StudentSkill {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skillKey       String
+  name           String
+  score          Int
+  classification String   // VERIFIED (70-100), DEVELOPING (40-69), WEAK (0-39)
+  careerSlug     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([userId, skillKey])
+  @@index([userId])
+  @@map("student_skills")
+}
+
+model Career {
+  id          String            @id @default(uuid())
+  slug        String            @unique
+  title       String
+  category    String
+  salaryRange String
+  growthRate  String
+  description String
+  templates   RoadmapTemplate[]
+
+  @@map("careers")
+}
+
+model RoadmapTemplate {
+  id         String   @id @default(uuid())
+  careerId   String
+  career     Career   @relation(fields: [careerId], references: [id], onDelete: Cascade)
+  version    String
+  isActive   Boolean  @default(false)
+  phasesJson String   // Serialized RoadmapPhase[]
+  createdAt  DateTime @default(now())
+
+  @@unique([careerId, version])
+  @@map("roadmap_templates")
+}
+
+model RoadmapProgress {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  careerSlug      String
+  currentPhaseId  String   @default("phase-1")
+  completedPhases String   @default("[]") // Serialized string[]
+  completedTasks  String   @default("[]") // Serialized string[]
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, careerSlug])
+  @@map("roadmap_progress")
+}
+
+model DailyTask {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  durationMin Int       @default(30)
+  status      String    @default("todo") // todo, in_progress, done
+  category    String    @default("skill")
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@map("daily_tasks")
+}
+
+model MentorProfile {
+  id         String          @id @default(uuid())
+  userId     String?         @unique
+  user       User?           @relation("MentorUser", fields: [userId], references: [id], onDelete: SetNull)
+  name       String
+  role       String
+  company    String
+  experience String
+  industry   String
+  skillsJson String          // Serialized string[]
+  price      String
+  rating     Float           @default(5.0)
+  reviews    Int             @default(0)
+  bio        String
+  slotsJson  String          // Serialized string[] of available ISO dates/times
+  bookings   MentorBooking[]
+
+  @@map("mentor_profiles")
+}
+
+model MentorBooking {
+  id            String        @id @default(uuid())
+  studentId     String
+  student       User          @relation("StudentBookings", fields: [studentId], references: [id], onDelete: Cascade)
+  mentorId      String
+  mentor        MentorProfile @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  scheduledTime String        // ISO 8601 string with explicit timezone (e.g., 2026-11-27T16:00:00Z)
+  topic         String
+  notes         String?
+  status        String        @default("REQUESTED") // REQUESTED, CONFIRMED, REJECTED, CANCELLED, COMPLETED
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Lookup index; active-reservation uniqueness (REQUESTED/CONFIRMED) is enforced by partial unique index
+  // `one_active_booking_per_mentor_slot` in migration 0002_partial_unique_active_booking.
+  @@index([mentorId, scheduledTime])
+  @@map("mentor_bookings")
+}

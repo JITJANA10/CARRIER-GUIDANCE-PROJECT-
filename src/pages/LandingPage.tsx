@@ -1,127 +1,161 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { 
+  TrendingUp, 
+  BrainCircuit, 
+  Map, 
+  Compass, 
+  ShieldCheck, 
+  ArrowRight, 
+  Activity, 
+  CalendarCheck, 
+  Users, 
+  Sparkles,
+  Layers,
+  ChevronRight
+} from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
-import { Brain, Map, Compass, ShieldCheck } from 'lucide-react';
+import { Badge } from '../components/ui/Badge';
 
 export function LandingPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-[#111214] text-[#F4F4F5]">
       {/* Hero Section */}
-      <section className="relative pt-24 pb-32 overflow-hidden">
-        {/* Background Effects */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-blue/20 rounded-full blur-[120px] -z-10" />
-        <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-brand-violet/20 rounded-full blur-[100px] -z-10" />
-        
-        <div className="container mx-auto px-4 md:px-8 text-center space-y-8">
-          <motion.h1 
-            className="text-5xl md:text-7xl font-bold tracking-tight text-white max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            Your Future. <span className="text-gradient">Mapped Personally.</span>
-          </motion.h1>
-          
-          <motion.p 
-            className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            Discover the right career, education, skills, mentors and opportunities — all personalized around who you are and where you want to go.
-          </motion.p>
-          
-          <motion.div 
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <Button size="lg" asChild className="text-md h-12 px-8 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)]">
-              <Link to="/onboarding">Build My Career Roadmap →</Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild className="text-md h-12 px-8 rounded-full border-white/20 hover:bg-white/5">
-              <Link to="/dashboard/explorer">Explore Careers</Link>
-            </Button>
-          </motion.div>
-          
-          <motion.div 
-            className="flex items-center justify-center gap-2 text-sm text-slate-400 pt-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <ShieldCheck className="h-4 w-4 text-brand-cyan" />
-            <span>AI-powered guidance • Human mentorship • Real-world opportunities</span>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* How it Works Section */}
-      <section className="py-24 bg-black/20 border-y border-white/5">
-        <div className="container mx-auto px-4 md:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">One platform. Your entire future.</h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">Know Yourself → Choose Your Direction → Build Skills → Gain Experience → Launch Your Career</p>
+      <section className="relative pt-20 pb-24 border-b border-[#34383D]">
+        <div className="container mx-auto px-4 md:px-8 max-w-5xl text-center space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#202327] border border-[#34383D] text-xs text-[#A1A1AA]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#75D69A]" />
+            <span>PathPilot OS v1.0 • Built for Ambitious Builders</span>
+            <ChevronRight className="w-3 h-3 text-[#71717A]" />
           </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <Link to="/dashboard/assessments" className="block">
-              <Card glass className="border-white/10 relative overflow-hidden group h-full hover:border-brand-cyan/50 transition-colors cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <CardContent className="pt-8 text-center space-y-4">
-                  <div className="mx-auto w-16 h-16 rounded-2xl bg-brand-navy border border-white/10 flex items-center justify-center mb-6">
-                    <Brain className="h-8 w-8 text-brand-cyan group-hover:scale-110 transition-transform" />
-                  </div>
-                  <div className="text-sm font-bold text-brand-cyan tracking-wider">01</div>
-                  <h3 className="text-xl font-bold">Discover Yourself</h3>
-                  <p className="text-slate-400">Understand your interests, strengths, personality and goals through AI-powered assessments.</p>
-                </CardContent>
-              </Card>
-            </Link>
 
-            <Link to="/dashboard/roadmap" className="block">
-              <Card glass className="border-white/10 relative overflow-hidden group h-full hover:border-brand-violet/50 transition-colors cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-br from-brand-violet/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <CardContent className="pt-8 text-center space-y-4">
-                  <div className="mx-auto w-16 h-16 rounded-2xl bg-brand-navy border border-white/10 flex items-center justify-center mb-6">
-                    <Map className="h-8 w-8 text-brand-violet group-hover:scale-110 transition-transform" />
-                  </div>
-                  <div className="text-sm font-bold text-brand-violet tracking-wider">02</div>
-                  <h3 className="text-xl font-bold">Build Your Path</h3>
-                  <p className="text-slate-400">Get personalized career, education and skill recommendations mapped out in a visual timeline.</p>
-                </CardContent>
-              </Card>
-            </Link>
+          <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-[#F4F4F5] max-w-3xl mx-auto leading-tight">
+            Your Future. <span className="text-[#8B7CFF]">Mapped Personally.</span>
+          </h1>
 
-            <Link to="/dashboard" className="block">
-              <Card glass className="border-white/10 relative overflow-hidden group h-full hover:border-brand-blue/50 transition-colors cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <CardContent className="pt-8 text-center space-y-4">
-                  <div className="mx-auto w-16 h-16 rounded-2xl bg-brand-navy border border-white/10 flex items-center justify-center mb-6">
-                    <Compass className="h-8 w-8 text-brand-blue group-hover:scale-110 transition-transform" />
-                  </div>
-                  <div className="text-sm font-bold text-brand-blue tracking-wider">03</div>
-                  <h3 className="text-xl font-bold">Take Action</h3>
-                  <p className="text-slate-400">Follow small steps, work with mentors, build projects and discover matching opportunities.</p>
-                </CardContent>
-              </Card>
-            </Link>
+          <p className="text-base sm:text-lg text-[#A1A1AA] max-w-2xl mx-auto leading-relaxed">
+            Your future doesn't need to be figured out all at once. Take the first step — PathPilot maps every subsequent milestone with continuous skill intelligence.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <Button size="lg" asChild className="gap-2 text-xs font-semibold px-6 shadow-md">
+              <Link to="/onboarding">
+                Build My Career Roadmap <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" asChild className="text-xs font-semibold px-6 border-[#34383D]">
+              <Link to="/dashboard">
+                Explore Dashboard
+              </Link>
+            </Button>
+          </div>
+
+          <div className="flex items-center justify-center gap-6 text-xs text-[#71717A] pt-4">
+            <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-[#75D69A]" /> Verified Competency Benchmarks</span>
+            <span className="flex items-center gap-1.5"><Activity className="w-3.5 h-3.5 text-[#42C5E8]" /> Real-time Career Digital Twin</span>
           </div>
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-brand-blue/10" />
-        <div className="container mx-auto px-4 md:px-8 text-center relative z-10 space-y-8">
-          <h2 className="text-4xl md:text-5xl font-bold max-w-3xl mx-auto">Your future doesn't need to be figured out all at once.</h2>
-          <p className="text-xl text-slate-300">Take the first step. PathPilot will help you figure out the next one.</p>
-          <div className="pt-8">
-            <Button size="lg" asChild className="text-md h-12 px-8 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.4)]">
-              <Link to="/onboarding">Build My Personalized Roadmap →</Link>
+      {/* The 5-Pillar Operating Flywheel */}
+      <section className="py-20 border-b border-[#34383D] bg-[#17191C]/50">
+        <div className="container mx-auto px-4 md:px-8 max-w-5xl">
+          <div className="text-center mb-12 space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#8B7CFF]">Methodology</span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#F4F4F5]">The Five-Pillar Career Engine</h2>
+            <p className="text-xs text-[#71717A] max-w-xl mx-auto">
+              A systematic flywheel replacing academic ambiguity with continuous execution.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              {
+                num: '01',
+                title: 'Discover Yourself',
+                icon: BrainCircuit,
+                desc: 'Deep psychometric and soft-skill baselines that uncover your unique analytical and interpersonal strengths.',
+                path: '/dashboard/assessments'
+              },
+              {
+                num: '02',
+                title: 'Choose Direction',
+                icon: Compass,
+                desc: 'Market-calibrated role matching cross-referencing compensation, hiring demand, and skill affinity.',
+                path: '/dashboard/explorer'
+              },
+              {
+                num: '03',
+                title: 'Build Skills',
+                icon: Activity,
+                desc: 'Digital Twin simulation benchmarking your proficiency against verified senior practitioner requirements.',
+                path: '/dashboard/skills'
+              },
+              {
+                num: '04',
+                title: 'Gain Experience',
+                icon: CalendarCheck,
+                desc: 'Context-adaptive daily routines that generate 20–45 minute actionable portfolio deliverables.',
+                path: '/dashboard/routine'
+              },
+              {
+                num: '05',
+                title: 'Launch Career',
+                icon: Users,
+                desc: 'Milestone phased roadmaps, portfolio case-study compilation, and 1-on-1 expert mentor feedback.',
+                path: '/dashboard/roadmap'
+              },
+              {
+                num: 'AI',
+                title: '24/7 AI Mentor',
+                icon: Sparkles,
+                desc: 'Always-available strategic advisor context-aware of your current roadblocks and target role.',
+                path: '/dashboard/ai-mentor'
+              }
+            ].map(pillar => (
+              <Link key={pillar.num} to={pillar.path}>
+                <Card className="p-5 bg-[#202327] border-[#34383D] hover:border-[#8B7CFF]/50 transition-all h-full flex flex-col justify-between group">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-8 h-8 rounded-lg bg-[#17191C] border border-[#34383D] flex items-center justify-center text-[#8B7CFF] group-hover:border-[#8B7CFF]/50 transition-colors">
+                        <pillar.icon className="w-4 h-4" />
+                      </div>
+                      <span className="font-mono text-xs font-bold text-[#71717A]">{pillar.num}</span>
+                    </div>
+
+                    <h3 className="text-sm font-bold text-[#F4F4F5] group-hover:text-white transition-colors">
+                      {pillar.title}
+                    </h3>
+
+                    <p className="text-xs text-[#A1A1AA] leading-relaxed">
+                      {pillar.desc}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 flex items-center gap-1 text-[11px] text-[#8B7CFF] font-medium">
+                    <span>Inspect module</span>
+                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-20 bg-[#111214]">
+        <div className="container mx-auto px-4 md:px-8 max-w-3xl text-center space-y-5">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#F4F4F5]">
+            Stop guessing your career trajectory.
+          </h2>
+          <p className="text-xs sm:text-sm text-[#A1A1AA] max-w-xl mx-auto">
+            Build your personalized competency roadmap in less than 3 minutes.
+          </p>
+          <div className="pt-2">
+            <Button size="lg" asChild className="gap-2 text-xs font-semibold px-8">
+              <Link to="/onboarding">Get Started with PathPilot <ArrowRight className="w-4 h-4" /></Link>
             </Button>
           </div>
         </div>
